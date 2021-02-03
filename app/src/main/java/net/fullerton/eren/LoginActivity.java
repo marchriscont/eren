@@ -14,6 +14,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
+import android.webkit.CookieManager;
 import android.webkit.JsResult;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
@@ -23,6 +24,11 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+
+import net.fullerton.eren.handlers.Essential;
+import net.fullerton.eren.handlers.JSFunc;
+
+import okhttp3.Cookie;
 
 
 /**
@@ -71,6 +77,7 @@ public class LoginActivity extends AppCompatActivity {
 
         mWebView = (WebView) findViewById(R.id.webview);
         mWebView.getSettings().setJavaScriptEnabled(true);
+        mWebView.getSettings().setDomStorageEnabled(true);
         mWebView.loadUrl("https://my.fullerton.edu");
 
         WebViewClient webViewClient = new WebViewClient() {
@@ -81,7 +88,7 @@ public class LoginActivity extends AppCompatActivity {
 
                 if(pendingLogin){
                     mWebView.setVisibility(View.VISIBLE);
-                    view.loadUrl("javascript: (function() {alert(document.querySelector('#content > h3:nth-child(1)').textContent);}) ();");
+                    JSFunc.alert(mWebView, "document.querySelector('#content > h3:nth-child(1)').textContent)");
                 }
             }
         };
@@ -145,11 +152,11 @@ public class LoginActivity extends AppCompatActivity {
             // perform the user login attempt.
             //showProgress(true);
             try {
-                while (!pageLoaded)
+                while (!pageLoaded && Essential.isConnectedToInternet(this))
                     Thread.sleep(1000);
-                mWebView.loadUrl("javascript: (function() {document.getElementById('username').value = '"+ username + "'}) ();");
-                mWebView.loadUrl("javascript: (function() {document.getElementById('password').value = '"+ password + "'}) ();");
-                mWebView.loadUrl("javascript: (function() {document.getElementsByClassName('LoginButton')[0].click()}) ();");
+                JSFunc.setTextField(mWebView, "username", username);
+                JSFunc.setTextField(mWebView, "password", password);
+                JSFunc.clickButton(mWebView, "LoginButton", 0);
                 pendingLogin = true;
             }catch(Exception e){}
         }
