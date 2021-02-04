@@ -3,6 +3,7 @@ package net.fullerton.eren;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.AsyncTask;
 
@@ -17,6 +18,7 @@ import android.view.inputmethod.EditorInfo;
 import android.webkit.CookieManager;
 import android.webkit.JsResult;
 import android.webkit.WebChromeClient;
+import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -68,7 +70,8 @@ public class LoginActivity extends AppCompatActivity {
         mUsernameSigninButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                attemptLogin();
+                if(!pendingLogin)
+                    attemptLogin();
             }
         });
 
@@ -88,8 +91,25 @@ public class LoginActivity extends AppCompatActivity {
 
                 if(pendingLogin){
                     mWebView.setVisibility(View.VISIBLE);
-                    JSFunc.alert(mWebView, "document.querySelector('#content > h3:nth-child(1)').textContent)");
+                    JSFunc.alert(mWebView, "document.querySelector('#content > h3:nth-child(1)').textContent");
                 }
+
+                if(url.contains("https://my.fullerton.edu/Portal/Announcements")){
+                    JSFunc.clickButton(view, "skip", "submit");
+                    pendingLogin = true;
+                }
+            }
+
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+                if(request.getUrl().toString().contains("https://my.fullerton.edu/Portal/Dashboard/")){
+                    Intent myIntent = new Intent(view.getContext(), HomeActivity.class);
+                    myIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK); //Clear LoginActivity when switching to HomeActivity
+                    startActivityForResult(myIntent, 0);
+                    System.out.println("New Activity Pushed");
+                }
+                System.out.println("URL PUSHED: " + request.getUrl());
+                return super.shouldOverrideUrlLoading(view, request);
             }
         };
 
