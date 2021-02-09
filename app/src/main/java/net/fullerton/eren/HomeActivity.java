@@ -65,6 +65,8 @@ public class HomeActivity extends AppCompatActivity {
                 System.out.println("URL PUSHED: " + request.getUrl());
                 return super.shouldOverrideUrlLoading(view, request);
             }
+        };
+        mWebView.setWebViewClient(webViewClient);
     }
 
 }
