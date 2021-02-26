@@ -26,4 +26,9 @@ public class JSFunc {
     public static void alert(WebView mWebView, String message){
         mWebView.loadUrl("javascript: (function() {alert(" + message + ")}) ();");
     }
+
+    //MODAL TOP FUNC
+    public static void modalTop(WebView mWebView, String elementId, String value){
+        mWebView.loadUrl("javascript: (function() {window.frames[\"ModalTop\"].document.getElementById('" + elementId + "').value = '" + value + "'}) ();");
+    }
 }
