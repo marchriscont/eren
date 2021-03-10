@@ -28,7 +28,17 @@ public class JSFunc {
     }
 
     //MODAL TOP FUNC
-    public static void modalTop(WebView mWebView, String elementId, String value){
+    public static void modalTopValue(WebView mWebView, String elementId, String value){
         mWebView.loadUrl("javascript: (function() {window.frames[\"ModalTop\"].document.getElementById('" + elementId + "').value = '" + value + "'}) ();");
+    }
+    public static void modalTopClick(WebView mWebView, String elementId, String typ){
+        switch(typ){
+            case "click":
+                mWebView.loadUrl("javascript: (function() {window.frames[\"ModalTop\"].document.getElementById('" + elementId + "').click()}) ();");
+                break;
+            case "submit":
+                mWebView.loadUrl("javascript: (function() {window.frames[\"ModalTop\"].document.getElementById('" + elementId + "').submit()}) ();");
+                break;
+        }
     }
 }

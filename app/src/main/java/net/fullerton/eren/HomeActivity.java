@@ -13,18 +13,21 @@ import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.SearchView;
+import java.util.concurrent.TimeUnit;
+
 import android.widget.TextView;
 
-import net.fullerton.eren.handlers.JSFunc;
+import net.fullerton.eren.handlers.JSFunc; //imports the handlers file so we can use their functions
 
 import org.openqa.selenium.SearchContext;
+
+import static net.fullerton.eren.handlers.JSFunc.modalTopClick;
 
 public class HomeActivity extends AppCompatActivity {
 
     private boolean doneLoading = false;
     private SearchView searchView;
     private WebView mWebView;
-
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
 
@@ -56,6 +59,11 @@ public class HomeActivity extends AppCompatActivity {
         //mWebView.setVisibility(View.GONE);
         mWebView.getSettings().setJavaScriptEnabled(true);
         mWebView.getSettings().setDomStorageEnabled(true);
+        try {
+            TimeUnit.SECONDS.sleep(3);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         mWebView.loadUrl("https://my.fullerton.edu/Portal/Dashboard/Psoft/ClassScheduleSearch");
 
 
@@ -73,6 +81,7 @@ public class HomeActivity extends AppCompatActivity {
                 return super.shouldOverrideUrlLoading(view, request);
             }
         };
+        //changing class category
         WebChromeClient webChromeClient = new WebChromeClient(){
             @Override
             public boolean onJsAlert(WebView view, String url, String message, JsResult result) {
@@ -81,15 +90,17 @@ public class HomeActivity extends AppCompatActivity {
                     //since this whole onJsAlert is being called for every js alert then we check the messsage through this every time
                     //sleep timer for letting elements load
                     JSFunc.alert(mWebView,"window.frames[\"ModalTop\"].document.getElementById('SSR_CLSRCH_WRK_SUBJECT_SRCH$0')");
-                } else if(!doneLoading){ //set a boolean variable to true if webpage is done loading
+                } else if(!doneLoading) { //set a boolean variable to true if webpage is done loading
                     doneLoading = true;
-                    JSFunc.modalTop(view, "SSR_CLSRCH_WRK_SUBJECT_SRCH$0", "CPSC");
-
-
+                    JSFunc.modalTopValue(view, "SSR_CLSRCH_WRK_SUBJECT_SRCH$0", "CPSC"); //class category]
+                    JSFunc.modalTopValue(view, "SSR_CLSRCH_WRK_CATALOG_NBR$1", "121"); //class number
+                    JSFunc.modalTopClick(view, "CLASS_SRCH_WRK2_SSR_PB_CLASS_SRCH", "click"); //press the search button
                 }
                 return false; //disable alerts: return super.onJsAlert(view, url, message, result);
             }
         };
+
+
         mWebView.setWebChromeClient(webChromeClient);
         mWebView.setWebViewClient(webViewClient);
     }
