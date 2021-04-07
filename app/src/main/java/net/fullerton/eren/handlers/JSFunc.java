@@ -24,13 +24,14 @@ public class JSFunc {
     }
 
     public static void alert(WebView mWebView, String message){
-        mWebView.loadUrl("javascript: (function() {alert(" + message + ")}) ();");
+        mWebView.loadUrl("javascript: (function() {setTimeout(function() { alert(" + message + ")}, 500)}) ();");
     }
 
     //MODAL TOP FUNC
     public static void modalTopValue(WebView mWebView, String elementId, String value){
         mWebView.loadUrl("javascript: (function() {window.frames[\"ModalTop\"].document.getElementById('" + elementId + "').value = '" + value + "'}) ();");
     }
+
     public static void modalTopClick(WebView mWebView, String elementId, String typ){
         switch(typ){
             case "click":
@@ -40,5 +41,9 @@ public class JSFunc {
                 mWebView.loadUrl("javascript: (function() {window.frames[\"ModalTop\"].document.getElementById('" + elementId + "').submit()}) ();");
                 break;
         }
+    }
+
+    public static void modalTopChildren(WebView mWebView, String elementId){
+        mWebView.loadUrl("javascript: (function() {window.frames[\"ModalTop\"].document.getElementById('" + elementId + "').children[0].children[0].innerText}) ();");
     }
 }

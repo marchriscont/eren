@@ -2,6 +2,7 @@ package net.fullerton.eren;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
@@ -26,6 +27,7 @@ import static net.fullerton.eren.handlers.JSFunc.modalTopClick;
 public class HomeActivity extends AppCompatActivity {
 
     private boolean doneLoading = false;
+    private boolean classPageTest = false;
     private SearchView searchView;
     private WebView mWebView;
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
@@ -71,8 +73,18 @@ public class HomeActivity extends AppCompatActivity {
             @Override
 
             public void onPageFinished(WebView view, String url) {
-                JSFunc.alert(mWebView,"window.frames[\"ModalTop\"].document.getElementById('SSR_CLSRCH_WRK_SUBJECT_SRCH$0')");
+                try {
+                    TimeUnit.SECONDS.sleep(3);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                System.out.println("Page finished here");
+                if(!doneLoading) {
+                    JSFunc.alert(mWebView, "window.frames[\"ModalTop\"].document.getElementById('SSR_CLSRCH_WRK_SUBJECT_SRCH$0')");
+                }
                 super.onPageFinished(view, url);
+
+
             }
 
             @Override
@@ -86,16 +98,24 @@ public class HomeActivity extends AppCompatActivity {
             @Override
             public boolean onJsAlert(WebView view, String url, String message, JsResult result) {
                 System.out.println("MESSAGE GET: " + message);
-                if(message == "null" && !doneLoading){
-                    //since this whole onJsAlert is being called for every js alert then we check the messsage through this every time
-                    //sleep timer for letting elements load
-                    JSFunc.alert(mWebView,"window.frames[\"ModalTop\"].document.getElementById('SSR_CLSRCH_WRK_SUBJECT_SRCH$0')");
-                } else if(!doneLoading) { //set a boolean variable to true if webpage is done loading
-                    doneLoading = true;
-                    JSFunc.modalTopValue(view, "SSR_CLSRCH_WRK_SUBJECT_SRCH$0", "CPSC"); //class category]
-                    JSFunc.modalTopValue(view, "SSR_CLSRCH_WRK_CATALOG_NBR$1", "121"); //class number
-                    JSFunc.modalTopClick(view, "CLASS_SRCH_WRK2_SSR_PB_CLASS_SRCH", "click"); //press the search button
+                if(!doneLoading) {
+                    if (message == "null") {
+                        //since this whole onJsAlert is being called for every js alert then we check the messsage through this every time
+                        //sleep timer for letting elements load
+                        JSFunc.alert(mWebView, "window.frames[\"ModalTop\"].document.getElementById('SSR_CLSRCH_WRK_SUBJECT_SRCH$0')");
+                    } else { //set a boolean variable to true if webpage is done loading
+                        doneLoading = true;
+                        handler.post(runnable);
+                        JSFunc.modalTopValue(view, "SSR_CLSRCH_WRK_SUBJECT_SRCH$0", "CPSC"); //class category]
+                        JSFunc.modalTopValue(view, "SSR_CLSRCH_WRK_CATALOG_NBR$1", "121"); //class number
+                        JSFunc.modalTopClick(view, "CLASS_SRCH_WRK2_SSR_PB_CLASS_SRCH", "click"); //press the search button
+                    }
                 }
+                if(message.split("|")[1] != "null"){
+                    JSFunc.alert(mWebView, "window.frames[\"ModalTop\"].document.getElementById(\"ACE_$ICField48$0\").children[0].children[1].innerText");
+                }
+
+
                 return false; //disable alerts: return super.onJsAlert(view, url, message, result);
             }
         };
@@ -104,5 +124,18 @@ public class HomeActivity extends AppCompatActivity {
         mWebView.setWebChromeClient(webChromeClient);
         mWebView.setWebViewClient(webViewClient);
     }
+    // Create the Handler
+    private Handler handler = new Handler();
 
+    // Define the code block to be executed
+    private Runnable runnable = new Runnable() {
+        @Override
+        public void run() {
+            // Insert custom code here
+            JSFunc.alert(mWebView, "window.frames[\"ModalTop\"].document.getElementById('SSR_CLSRCH_WRK_SUBJECT_SRCH$0')+'|'+window.frames[\"ModalTop\"].document.getElementById('ACE_$ICField48$0')");
+
+            // Repeat every 3 seconds
+            handler.postDelayed(runnable, 3000);
+        }
+    };
 }
