@@ -1,5 +1,6 @@
 package net.fullerton.eren.handlers;
 
+import android.webkit.ValueCallback;
 import android.webkit.WebView;
 
 public class JSFunc {
@@ -45,5 +46,15 @@ public class JSFunc {
 
     public static void modalTopChildren(WebView mWebView, String elementId){
         mWebView.loadUrl("javascript: (function() {window.frames[\"ModalTop\"].document.getElementById('" + elementId + "').children[0].children[0].innerText}) ();");
+    }
+
+    public static void grabSchedule(WebView mWebView) {
+
+        mWebView.evaluateJavascript("(function() { return window.frames[\"ModalTop\"].document.getElementById('CLASS_NAME$span$0').innerText; }) ()", new ValueCallback<String>() {
+            @Override
+            public void onReceiveValue(String s) {
+                alert(mWebView, s);
+            }
+        });
     }
 }
