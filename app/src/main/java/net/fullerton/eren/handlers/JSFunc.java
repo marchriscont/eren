@@ -48,12 +48,13 @@ public class JSFunc {
         mWebView.loadUrl("javascript: (function() {window.frames[\"ModalTop\"].document.getElementById('" + elementId + "').children[0].children[0].innerText}) ();");
     }
 
-    public static void grabSchedule(WebView mWebView) {
-
-        mWebView.evaluateJavascript("(function() { return window.frames[\"ModalTop\"].document.getElementById('CLASS_NAME$span$0').innerText; }) ()", new ValueCallback<String>() {
+    //asks the user for number of classes to iterate and retrieve the class
+    public static void grabSchedule(WebView mWebView, int numOfClasses) {
+        String myString = Integer.toString(numOfClasses);
+        mWebView.evaluateJavascript("(function() { return window.frames[\"ModalTop\"].document.getElementById('CLASS_NAME$span$"+ myString + "').innerText; }) ()", new ValueCallback<String>() {
             @Override
             public void onReceiveValue(String s) {
-                alert(mWebView, s);
+                    alert(mWebView, s);
             }
         });
     }
