@@ -11,11 +11,13 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SearchView;
+import android.widget.Toast;
 
 import net.fullerton.eren.handlers.JSFunc;
 
@@ -24,13 +26,16 @@ import java.util.Set;
 import java.util.Vector;
 import java.util.concurrent.TimeUnit;
 
+/*TO DO
+-CHECK FOR CASE WHERE "CLASSES ARE FULL OR IF CLASS DOESN't EXIST"
+-
+ */
 public class HomeActivity extends AppCompatActivity {
     //USER INPUT
     HashMap<String, String> classCatList = new HashMap<String, String>(); //hashmap to hold the class cats and their values
     Vector<String> vect = new Vector<String>();
     ArrayAdapter<String> adapter;
     String classCat, classNumber;
-    EditText classCatInput;
     EditText classNumberInput;
     Button searchButton;
     SearchView mySearchView;
@@ -70,7 +75,6 @@ public class HomeActivity extends AppCompatActivity {
         //------------------------------------------------------------
         mySearchView = (SearchView) findViewById(R.id.searchBar);
         myList = (ListView) findViewById(R.id.classList);
-        classCatInput = (EditText) findViewById(R.id.class_cat);
         classNumberInput = (EditText) findViewById(R.id.class_num);
         searchButton = (Button) findViewById(R.id.search);
         System.out.println("VALUES BEFORE");
@@ -197,14 +201,25 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
 
+        //ListView listener to check if something is clicked
+        myList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                classCat = (String) adapterView.getItemAtPosition(i);
+                Toast.makeText(HomeActivity.this, classCat, Toast.LENGTH_SHORT).show();
+            }
+        });
+
+
+
         //------------------------------------------------------------
         //THIS IS WHERE THE SEARCH BEGINS AFTER THE BUTTON IS CLICKED
         //------------------------------------------------------------
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                classCat = classCatInput.getText().toString();
                 classNumber = classNumberInput.getText().toString();
+                classCat = classCatList.get(classCat);
                 BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
                 navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
