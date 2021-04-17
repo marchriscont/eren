@@ -1,6 +1,7 @@
 package net.fullerton.eren;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
@@ -271,20 +272,29 @@ public class HomeActivity extends AppCompatActivity {
                                 JSFunc.alert(mWebView, "window.frames[\"ModalTop\"].document.getElementById('SSR_CLSRCH_WRK_SUBJECT_SRCH$0')");
                             } else { //set a boolean variable to true if webpage is done loading
                                 doneLoading = true;
-                                //handler.post(runnable);
+                                handler.post(runnable);
                                 JSFunc.modalTopValue(view, "SSR_CLSRCH_WRK_SUBJECT_SRCH$0", classCat); //class category]
                                 JSFunc.modalTopValue(view, "SSR_CLSRCH_WRK_CATALOG_NBR$1", classNumber); //class number
                                 JSFunc.modalTopClick(view, "CLASS_SRCH_WRK2_SSR_PB_CLASS_SRCH", "click"); //press the search button
+                                return false;
                             }
                         }
-                        if(message.split("|")[1] != "null"){
-                            JSFunc.alert(mWebView, "window.frames[\"ModalTop\"].document.getElementById(\"ACE_$ICField48$0\").children[0].children[1].innerText");
+
+                        if(!paused && message.split("|")[1] != "null") {
+                            //we need to get the size of the result we got
+                            JSFunc.returnAlert(mWebView, "var alertBox = \"\";for(var i=0; i<(window.frames[\"ModalTop\"].document.getElementById(\"ACE_$ICField48$0\").tBodies[0].rows.length)/2; i++){ alertBox += window.frames[\"ModalTop\"].document.getElementById(\"MTG_CLASS_NBR$\" + i).innerText + \",\";alertBox += window.frames[\"ModalTop\"].document.getElementById(\"MTG_DAYTIME$\" + i).innerText + \",\";alertBox += window.frames[\"ModalTop\"].document.getElementById(\"MTG_ROOM$\" + i).innerText + \",\";alertBox += window.frames[\"ModalTop\"].document.getElementById(\"MTG_INSTR$\" + i).innerText + \"\\n\";}", "alertBox");
+                            paused = true;
+                            //LEAVE ON ON DESTROY
+                            //handler.removeCallbacksAndMessages(null);
+                            return false;
                         }
-
-
+                        //AT THIS POINT MESSAGE VARIABLE HOLDS A STRING OF ALL CLASSES SEPARATED BY COMMAS
+                        //NOW WE NEED TO SPLIT THE LONG STRING INTO A VECTOR OF CLASS STRINGS
+                        System.out.println(message);
                         return false; //disable alerts: return super.onJsAlert(view, url, message, result);
                     }
                 };
+
                 mWebView.setWebChromeClient(webChromeClient);
                 mWebView.setWebViewClient(webViewClient);
 
@@ -364,17 +374,21 @@ public class HomeActivity extends AppCompatActivity {
         mWebView.setWebViewClient(webViewClient); */
     }
     // Create the Handler
-    /*private Handler handler = new Handler(); */
+    private Handler handler = new Handler();
 
+    private boolean paused = false;
     // Define the code block to be executed
-    /*private Runnable runnable = new Runnable() {
+    private Runnable runnable = new Runnable() {
         @Override
         public void run() {
+            if(paused){
+                return;
+            }
             // Insert custom code here
             JSFunc.alert(mWebView, "window.frames[\"ModalTop\"].document.getElementById('SSR_CLSRCH_WRK_SUBJECT_SRCH$0')+'|'+window.frames[\"ModalTop\"].document.getElementById('ACE_$ICField48$0')");
 
             // Repeat every 3 seconds
             handler.postDelayed(runnable, 3000);
         }
-    }; */
+    };
 }

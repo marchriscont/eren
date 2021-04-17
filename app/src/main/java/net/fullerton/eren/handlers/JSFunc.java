@@ -28,6 +28,10 @@ public class JSFunc {
         mWebView.loadUrl("javascript: (function() {setTimeout(function() { alert(" + message + ")}, 500)}) ();");
     }
 
+    public static void returnAlert(WebView mWebView, String message, String varName){
+        mWebView.loadUrl("javascript: (function() {setTimeout(function() { "+ message + ";alert(" + varName + ")}, 500)}) ();");
+    }
+
     //MODAL TOP FUNC
     public static void modalTopValue(WebView mWebView, String elementId, String value){
         mWebView.loadUrl("javascript: (function() {window.frames[\"ModalTop\"].document.getElementById('" + elementId + "').value = '" + value + "'}) ();");
@@ -58,4 +62,5 @@ public class JSFunc {
             }
         });
     }
+
 }
