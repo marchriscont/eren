@@ -3,6 +3,7 @@ package net.fullerton.eren;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -13,9 +14,11 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.webkit.JsResult;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceRequest;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.AutoCompleteTextView;
@@ -34,17 +37,25 @@ public class LoginActivity extends AppCompatActivity {
     // UI references.
     private AutoCompleteTextView mUsernameView;
     private EditText mPasswordView;
-    private View mProgressView;
     private View mLoginFormView;
     private WebView mWebView;
 
+    private View mProgressView;
+    private TextView mProgressText;
+
     private boolean pageLoaded = false;
     private boolean pendingLogin = false;
+    private boolean pendingDUO = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        mLoginFormView = findViewById(R.id.login_form);
+        mProgressView = findViewById(R.id.login_progress);
+        mProgressText = findViewById(R.id.progress_text);
+
+        showProgress(true, "Waiting For Login Page");
         // Set up the login form.
         mUsernameView = findViewById(R.id.username);
 
@@ -52,8 +63,11 @@ public class LoginActivity extends AppCompatActivity {
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
-                if (id == EditorInfo.IME_ACTION_DONE || id == EditorInfo.IME_NULL) {
+                if (id == EditorInfo.IME_ACTION_DONE) {
                     attemptLogin();
+                    //hide keyboard
+                    InputMethodManager imm = (InputMethodManager) textView.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(textView.getWindowToken(), 0);
                     return true;
                 }
                 return false;
@@ -69,12 +83,14 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        mLoginFormView = findViewById(R.id.login_form);
-        mProgressView = findViewById(R.id.login_progress);
+        initializeWebview();
+    }
 
+    private void initializeWebview(){
         mWebView = (WebView) findViewById(R.id.webview);
         mWebView.getSettings().setJavaScriptEnabled(true);
         mWebView.getSettings().setDomStorageEnabled(true);
+        mWebView.getSettings().setCacheMode(WebSettings.LOAD_DEFAULT);
         mWebView.loadUrl("https://my.fullerton.edu");
 
         WebViewClient webViewClient = new WebViewClient() {
@@ -84,12 +100,14 @@ public class LoginActivity extends AppCompatActivity {
                 pageLoaded = true;
 
                 if(pendingLogin){
-                    mWebView.setVisibility(View.VISIBLE);
-                    JSFunc.alert(mWebView, "document.querySelector('#content > h3:nth-child(1)').textContent");
+                    //mWebView.setVisibility(View.VISIBLE);
+                    JSFunc.alert(mWebView, "document.querySelector('#content > h3:nth-child(1)').textContent", null); //TODO: Value Callback
                 }
 
                 if(url.contains("https://my.fullerton.edu/Portal/Announcements")){
                     JSFunc.clickButton(view, "skip", "submit");
+                    pendingLogin = true;
+                }else if(url.contains("https://my.fullerton.edu/Portal/Dashboard/")){
                     pendingLogin = true;
                 }
             }
@@ -111,14 +129,22 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public boolean onJsAlert(WebView view, String url, String message, JsResult result) {
                 System.out.println("MESSAGE GET: " + message);
-                return false; //disable alerts: return super.onJsAlert(view, url, message, result);
+                if(message.contains("Duo authentication is required.")){
+                    pendingDUO = true;
+                    showProgress(true, "Waiting For Duo Authentication");
+                    //TODO: Future allow DUO calls
+                }
+                //disable alerts
+                result.confirm();
+                return true;
             }
         };
 
         mWebView.setWebViewClient(webViewClient);
         mWebView.setWebChromeClient(webChromeClient);
 
-        mWebView.setVisibility(View.VISIBLE);
+        //mWebView.setVisibility(View.VISIBLE);
+        showProgress(false, "");
     }
 
 
@@ -188,10 +214,11 @@ public class LoginActivity extends AppCompatActivity {
      * Shows the progress UI and hides the login form.
      */
     @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
-    private void showProgress(final boolean show) {
+    private void showProgress(final boolean show, final String message) {
         // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
         // for very easy animations. If available, use these APIs to fade-in
         // the progress spinner.
+        mProgressText.setText(message);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
             int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
 
@@ -205,6 +232,7 @@ public class LoginActivity extends AppCompatActivity {
             });
 
             mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
+            mProgressText.setVisibility(show ? View.VISIBLE : View.GONE);
             mProgressView.animate().setDuration(shortAnimTime).alpha(
                     show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
                 @Override
@@ -216,6 +244,7 @@ public class LoginActivity extends AppCompatActivity {
             // The ViewPropertyAnimator APIs are not available, so simply show
             // and hide the relevant UI components.
             mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
+            mProgressText.setVisibility(show ? View.VISIBLE : View.GONE);
             mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
         }
     }

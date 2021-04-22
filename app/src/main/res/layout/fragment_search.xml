@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#111111"
+    tools:context=".SearchFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <SearchView
+            android:id="@+id/searchview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:closeIcon="@drawable/ic_white_clear"
+            android:imeOptions="actionSearch"
+            android:searchHintIcon="@drawable/ic_white_search"
+            android:searchIcon="@drawable/ic_white_search">
+
+        </SearchView>
+
+        <ListView
+            android:id="@+id/searchsuggestions"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#111111"
+            android:theme="@style/WhiteText" />
+    </LinearLayout>
+
+</FrameLayout>

@@ -6,44 +6,44 @@ import android.webkit.WebView;
 public class JSFunc {
 
     public static void setTextField(WebView mWebView, String elementId, String value){
-        mWebView.loadUrl("javascript: (function() {document.getElementById('" + elementId + "').value = '" + value + "'}) ();");
+        mWebView.evaluateJavascript("document.getElementById('" + elementId + "').value = '" + value +"'", null);
     }
 
     public static void clickButton(WebView mWebView, String className, int index){
-        mWebView.loadUrl("javascript: (function() {document.getElementsByClassName('" + className + "')[" + String.valueOf(index) + "].click()}) ();");
+        mWebView.evaluateJavascript("document.getElementsByClassName('" + className + "')[0].click()", null);
     }
 
     public static void clickButton(WebView mWebView, String elementId, String typ){
         switch(typ){
             case "click":
-                mWebView.loadUrl("javascript: (function() {document.getElementById('" + elementId + "').click()}) ();");
+                mWebView.evaluateJavascript("document.getElementById('" + elementId + "').click()", null);
                 break;
             case "submit":
-                mWebView.loadUrl("javascript: (function() {document.getElementById('" + elementId + "').submit()}) ();");
+                mWebView.evaluateJavascript("document.getElementById('" + elementId + "').submit()", null);
                 break;
         }
     }
 
-    public static void alert(WebView mWebView, String message){
-        mWebView.loadUrl("javascript: (function() {setTimeout(function() { alert(" + message + ")}, 500)}) ();");
+    public static void alert(WebView mWebView, String message, ValueCallback<String> valueCallback){
+        mWebView.evaluateJavascript("alert(" + message + ")", valueCallback);
     }
 
-    public static void returnAlert(WebView mWebView, String message, String varName){
-        mWebView.loadUrl("javascript: (function() {setTimeout(function() { "+ message + ";alert(" + varName + ")}, 500)}) ();");
+    public static void returnValues(WebView mWebView, String message, ValueCallback<String> valueCallback){
+        mWebView.evaluateJavascript(message, valueCallback);
     }
 
     //MODAL TOP FUNC
     public static void modalTopValue(WebView mWebView, String elementId, String value){
-        mWebView.loadUrl("javascript: (function() {window.frames[\"ModalTop\"].document.getElementById('" + elementId + "').value = '" + value + "'}) ();");
+        mWebView.evaluateJavascript("window.frames[\"ModalTop\"].document.getElementById('" + elementId + "').value = '" + value + "'", null);
     }
 
     public static void modalTopClick(WebView mWebView, String elementId, String typ){
         switch(typ){
             case "click":
-                mWebView.loadUrl("javascript: (function() {window.frames[\"ModalTop\"].document.getElementById('" + elementId + "').click()}) ();");
+                mWebView.evaluateJavascript("window.frames[\"ModalTop\"].document.getElementById('" + elementId + "').click()", null);
                 break;
             case "submit":
-                mWebView.loadUrl("javascript: (function() {window.frames[\"ModalTop\"].document.getElementById('" + elementId + "').submit()}) ();");
+                mWebView.evaluateJavascript("window.frames[\"ModalTop\"].document.getElementById('" + elementId + "').submit()", null);
                 break;
         }
     }
@@ -58,7 +58,7 @@ public class JSFunc {
         mWebView.evaluateJavascript("(function() { return window.frames[\"ModalTop\"].document.getElementById('CLASS_NAME$span$"+ myString + "').innerText; }) ()", new ValueCallback<String>() {
             @Override
             public void onReceiveValue(String s) {
-                    alert(mWebView, s);
+                   // alert(mWebView, s);
             }
         });
     }
