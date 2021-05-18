@@ -40,6 +40,8 @@ import java.util.concurrent.TimeUnit;
 public class HomeActivity extends AppCompatActivity {
     private HomeFragment homeFrag;
     private SearchFragment searchFrag;
+    private CartFragment cartFrag;
+    public WebView mWebViewCart;
     public WebView mWebViewHome;
     public WebView mWebView;
 
@@ -59,7 +61,7 @@ public class HomeActivity extends AppCompatActivity {
                     fragmentTransaction.replace(R.id.view2, searchFrag.newInstance()).commit();
                     return true;
                 case R.id.navigation_notifications:
-                    //fragmentTransaction.replace(R.id.view2, homeFrag.newInstance()).commit();
+                    fragmentTransaction.replace(R.id.view2, cartFrag.newInstance()).commit();
                     return true;
             }
             return false;
@@ -80,7 +82,7 @@ public class HomeActivity extends AppCompatActivity {
         //CART: mWebViewCart
         initWebview();
         initWebviewHome();
-
+        initWebviewCart();
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
     }
@@ -155,5 +157,41 @@ public class HomeActivity extends AppCompatActivity {
         mWebViewHome.setWebViewClient(webViewClient);
 
         homeFrag = new HomeFragment();
+    }
+
+    private void initWebviewCart() {
+        mWebViewCart = (WebView) findViewById(R.id.webviewCart);
+        mWebViewCart.setVisibility(View.GONE);
+        mWebViewCart.getSettings().setJavaScriptEnabled(true);
+        mWebViewCart.getSettings().setDomStorageEnabled(true);
+        mWebViewCart.getSettings().setCacheMode(WebSettings.LOAD_DEFAULT);
+
+        WebViewClient webViewClient = new WebViewClient(){
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                super.onPageFinished(view, url);
+                System.out.println("Cart Page finished here");
+            }
+
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+                System.out.println("CART URL PUSHED: " + request.getUrl());
+                return super.shouldOverrideUrlLoading(view, request);
+            }
+        };
+
+        WebChromeClient webChromeClient = new WebChromeClient(){
+            @Override
+            public boolean onJsAlert(WebView view, String url, String message, JsResult result) {
+                System.out.println("Cart MESSAGE GET: " + message);
+                result.confirm();
+                return true;
+            }
+        };
+
+        mWebViewCart.setWebChromeClient(webChromeClient);
+        mWebViewCart.setWebViewClient(webViewClient);
+
+        cartFrag = new CartFragment();
     }
 }
