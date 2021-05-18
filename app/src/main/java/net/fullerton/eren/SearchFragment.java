@@ -48,6 +48,8 @@ public class SearchFragment extends Fragment {
         public void onReceiveValue(String value) {
             System.out.println("Received value: " + value);
             if(!value.equals("null")){
+                // On page load, set semester
+                parentActivity.mWebView.evaluateJavascript("(function() {var currentVal = window.frames[\"ModalTop\"].document.getElementById(\"CLASS_SRCH_WRK2_STRM$35$\").value;window.frames[\"ModalTop\"].document.getElementById(\"CLASS_SRCH_WRK2_STRM$35$\").value = (parseInt(currentVal) + 4).toString();})()", null);
                 classesPageLoaded = true;
             }else{
                 JSFunc.returnValues(parentActivity.mWebView, "(function() { return window.frames[\"ModalTop\"].document.getElementById('SSR_CLSRCH_WRK_SUBJECT_SRCH$0') })();", pageLoadedTest);
