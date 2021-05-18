@@ -81,7 +81,31 @@ public class HomeFragment extends Fragment {
         @Override
         public void onReceiveValue(String value) {
             if(value.equals("true")){
-                JSFunc.returnValues(parentActivity.mWebViewHome, "(function(){var test = window.frames[\"ModalTop\"].document.getElementById('trSTDNT_ENRL_SSVW$0_row1');var it = 2;while(test != null){test = window.frames[\"ModalTop\"].document.getElementById('trSTDNT_ENRL_SSVW$0_row' + it);it++;};var sBuilder = \"\";for(var i = 0; i < it-2; i++){sBuilder += window.frames[\"ModalTop\"].document.getElementById('E_CLASS_NAME$span$' + i).innerText.replace('\\n','');sBuilder += ',';sBuilder += window.frames[\"ModalTop\"].document.getElementById('E_CLASS_DESCR$' + i).innerText.replace('\\n','');sBuilder += ',';sBuilder += window.frames[\"ModalTop\"].document.getElementById('DERIVED_REGFRM1_SSR_MTG_SCHED_LONG$160$$' + i).innerText.replace('\\n','');sBuilder += ',';sBuilder += window.frames[\"ModalTop\"].document.getElementById('DERIVED_REGFRM1_SSR_MTG_LOC_LONG$161$$' + i).innerText.replace('\\n','');sBuilder += ',';sBuilder += window.frames[\"ModalTop\"].document.getElementById('DERIVED_REGFRM1_SSR_INSTR_LONG$162$$' + i).innerText.replace('\\n','');sBuilder += ',';sBuilder += window.frames[\"ModalTop\"].document.getElementById('STDNT_ENRL_SSVW_UNT_TAKEN$' + i).innerText.replace('\\n','');sBuilder += '|';};return sBuilder;})();", allocSchedule);
+                JSFunc.returnValues(parentActivity.mWebViewHome, "" +
+                        "(function(){" +
+                            "var test = window.frames[\"ModalTop\"].document.getElementById('trSTDNT_ENRL_SSVW$0_row1');" +
+                            "var it = 2;" +
+                            "while(test != null){" +
+                            "   test = window.frames[\"ModalTop\"].document.getElementById('trSTDNT_ENRL_SSVW$0_row' + it);" +
+                            "   it++;" +
+                            "   var sBuilder = \"\";" +
+                            "   for(var i = 0; i < it-2; i++){" +
+                            "       sBuilder += window.frames[\"ModalTop\"].document.getElementById('E_CLASS_NAME$span$' + i).innerText.replace('\\n','');" +
+                            "       sBuilder += ',';" +
+                            "       sBuilder += window.frames[\"ModalTop\"].document.getElementById('E_CLASS_DESCR$' + i).innerText.replace('\\n','');" +
+                            "       sBuilder += ',';" +
+                            "       sBuilder += window.frames[\"ModalTop\"].document.getElementById('DERIVED_REGFRM1_SSR_MTG_SCHED_LONG$160$$' + i).innerText.replace('\\n','');" +
+                            "       sBuilder += ',';" +
+                            "       sBuilder += window.frames[\"ModalTop\"].document.getElementById('DERIVED_REGFRM1_SSR_MTG_LOC_LONG$161$$' + i).innerText.replace('\\n','');" +
+                            "       sBuilder += ',';" +
+                            "       sBuilder += window.frames[\"ModalTop\"].document.getElementById('DERIVED_REGFRM1_SSR_INSTR_LONG$162$$' + i).innerText.replace('\\n','');" +
+                            "       sBuilder += ',';" +
+                            "       sBuilder += window.frames[\"ModalTop\"].document.getElementById('STDNT_ENRL_SSVW_UNT_TAKEN$' + i).innerText.replace('\\n','');" +
+                            "       sBuilder += '|';" +
+                            "   };" +
+                            "};" +
+                            "return sBuilder;" +
+                        "})();", allocSchedule);
             }else{
                 JSFunc.returnValues(parentActivity.mWebViewHome, "window.frames[\"ModalTop\"].document.getElementById('win0divDERIVED_REGFRM1_GROUP6GP').innerText.indexOf(\"Class Schedule\") > -1", onFinalLoad);
             }
@@ -95,7 +119,7 @@ public class HomeFragment extends Fragment {
             if(!value.equals("null")){
                 value = value.replace("\"", "");
                 String[] values = value.split("\\|");
-                terms = new String[values.length-1];
+                terms = new String[values.length];
                 int it = 0;
                 for(String item : values){
                     if(item.isEmpty() || item.equals("undefined"))

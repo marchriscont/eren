@@ -32,6 +32,7 @@ public class PreviewActivity extends AppCompatActivity {
     private TextView cRoom;
     //TODO: Add Waitlisted/etc icons
 
+    private Button addButton;
     private Button cancelButton;
 
     private WebView webView;
@@ -59,12 +60,26 @@ public class PreviewActivity extends AppCompatActivity {
             cRoom.setText((b.getString("cRoom").contains("WEB") ? "WEB" : b.getString("cRoom")));
         }
 
+        Intent intent = new Intent();
         cancelButton = findViewById(R.id.buttoncancel);
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                 setResult(1, intent);
+                 finish();
+            }
+        });
+
+        addButton = findViewById(R.id.addButton);
+        addButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String classID = (String) cDetails.getText().subSequence(0, 5);
+                intent.putExtra("CLASS_CODE", classID);
+                setResult(2, intent);
                 finish();
             }
+
         });
 
         webView = findViewById(R.id.webviewRate);

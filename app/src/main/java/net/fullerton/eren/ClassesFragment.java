@@ -86,13 +86,36 @@ public class ClassesFragment extends Fragment {
                         b.putString("cDetails", classesList[position].getNumber() + " | " + classesList[position].getDate());
                         b.putString("cRoom", classesList[position].getRoom());
                         intent.putExtras(b);
-                        startActivity(intent);
+                        startActivityForResult(intent, 2);
                     }
                 });
                 listView.invalidateViews();
             }
         }
     };
+
+    private ValueCallback<String> isShowingConfirmation = new ValueCallback<String>() {
+        @Override
+        public void onReceiveValue(String value) {
+            if (value.equals("true")) {
+                JSFunc.modalTopClick(parentActivity.mWebViewHome, "DERIVED_CLS_DTL_NEXT_PB$280$", "click");
+            }else{
+                JSFunc.returnValues(parentActivity.mWebViewHome, "(function() { return window.frames[\"ModalTop\"].document.getElementById(\"DERIVED_CLS_DTL_NEXT_PB$280$\") != null }) ()", isShowingConfirmation);
+            }
+        }
+    };
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == 2) {
+            System.out.println(data.getStringExtra("MESSAGE"));
+            JSFunc.modalTopValue(parentActivity.mWebViewHome, "DERIVED_REGFRM1_CLASS_NBR", data.getStringExtra("CLASS_CODE"));
+            JSFunc.modalTopClick(parentActivity.mWebViewHome, "DERIVED_REGFRM1_SSR_PB_ADDTOLIST2$9$", "click");
+            // Wait for page load
+            JSFunc.returnValues(parentActivity.mWebViewHome, "(function() { return window.frames[\"ModalTop\"].document.getElementById(\"DERIVED_CLS_DTL_NEXT_PB$280$\") != null }) ()", isShowingConfirmation);
+        }
+    }
 
     //TODO: Handle case if no internet | session timeout | website is down
     private ValueCallback<String> classesFound = new ValueCallback<String>() {
