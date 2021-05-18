@@ -225,7 +225,7 @@ public class HomeActivity extends AppCompatActivity {
 
     private void initWebviewAdd() {
         mWebViewAdd = (WebView) findViewById(R.id.webviewAdd);
-        mWebViewAdd.setVisibility(View.VISIBLE);
+        mWebViewAdd.setVisibility(View.GONE);
         mWebViewAdd.getSettings().setJavaScriptEnabled(true);
         mWebViewAdd.getSettings().setDomStorageEnabled(true);
         mWebViewAdd.getSettings().setCacheMode(WebSettings.LOAD_DEFAULT);
