@@ -8,6 +8,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.ValueCallback;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
@@ -98,22 +100,23 @@ public class ClassesFragment extends Fragment {
         @Override
         public void onReceiveValue(String value) {
             if (value.equals("true")) {
-                JSFunc.modalTopClick(parentActivity.mWebViewHome, "DERIVED_CLS_DTL_NEXT_PB$280$", "click");
+                JSFunc.modalTopClick(parentActivity.mWebViewAdd, "DERIVED_CLS_DTL_NEXT_PB$280$", "click");
             }else{
-                JSFunc.returnValues(parentActivity.mWebViewHome, "(function() { return window.frames[\"ModalTop\"].document.getElementById(\"DERIVED_CLS_DTL_NEXT_PB$280$\") != null }) ()", isShowingConfirmation);
+                JSFunc.returnValues(parentActivity.mWebViewAdd, "(function() { return window.frames[\"ModalTop\"].document.getElementById(\"DERIVED_CLS_DTL_NEXT_PB$280$\") != null }) ()", isShowingConfirmation);
             }
         }
     };
 
+    // If the Intent's result code is 2, the YES button was pressed and we've received the class code in as a StringExtra
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == 2) {
             System.out.println(data.getStringExtra("MESSAGE"));
-            JSFunc.modalTopValue(parentActivity.mWebViewHome, "DERIVED_REGFRM1_CLASS_NBR", data.getStringExtra("CLASS_CODE"));
-            JSFunc.modalTopClick(parentActivity.mWebViewHome, "DERIVED_REGFRM1_SSR_PB_ADDTOLIST2$9$", "click");
+            JSFunc.modalTopValue(parentActivity.mWebViewAdd, "DERIVED_REGFRM1_CLASS_NBR", data.getStringExtra("CLASS_CODE"));
+            JSFunc.modalTopClick(parentActivity.mWebViewAdd, "DERIVED_REGFRM1_SSR_PB_ADDTOLIST2$9$", "click");
             // Wait for page load
-            JSFunc.returnValues(parentActivity.mWebViewHome, "(function() { return window.frames[\"ModalTop\"].document.getElementById(\"DERIVED_CLS_DTL_NEXT_PB$280$\") != null }) ()", isShowingConfirmation);
+            JSFunc.returnValues(parentActivity.mWebViewAdd, "(function() { return window.frames[\"ModalTop\"].document.getElementById(\"DERIVED_CLS_DTL_NEXT_PB$280$\") != null }) ()", isShowingConfirmation);
         }
     }
 
@@ -157,7 +160,6 @@ public class ClassesFragment extends Fragment {
         searchView = (SearchView)lI.findViewById(R.id.searchview);
         listView = (ListView)lI.findViewById(R.id.listview);
         categoryView = (TextView)lI.findViewById(R.id.categoryview);
-
         searchView.setQueryHint("Course #");
         searchView.setIconified(false);
         searchView.setInputType(InputType.TYPE_CLASS_PHONE);

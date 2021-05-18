@@ -41,6 +41,7 @@ public class HomeActivity extends AppCompatActivity {
     private HomeFragment homeFrag;
     private SearchFragment searchFrag;
     private CartFragment cartFrag;
+    public WebView mWebViewAdd;
     public WebView mWebViewCart;
     public WebView mWebViewHome;
     public WebView mWebView;
@@ -83,6 +84,7 @@ public class HomeActivity extends AppCompatActivity {
         initWebview();
         initWebviewHome();
         initWebviewCart();
+        initWebviewAdd();
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
     }
@@ -193,5 +195,68 @@ public class HomeActivity extends AppCompatActivity {
         mWebViewCart.setWebViewClient(webViewClient);
 
         cartFrag = new CartFragment();
+    }
+
+    private ValueCallback<String> cart_isLoadedSemesterSelect = new ValueCallback<String>() {
+        @Override
+        public void onReceiveValue(String value) {
+            if(value.equals("true")) {
+                mWebViewAdd.evaluateJavascript("window.frames[\"ModalTop\"].document.getElementById('SSR_DUMMY_RECV1$sels$2$$0').checked = true", null);
+                JSFunc.modalTopClick(mWebViewAdd, "DERIVED_SSS_SCT_SSR_PB_GO", "click");
+            }else{
+                System.out.println("Loading Semester select page");
+                JSFunc.returnValues(mWebViewAdd, "(function() { return window.frames[\"ModalTop\"].document.getElementById('DERIVED_SSS_SCT_SSR_PB_GO') != null }) ()", cart_isLoadedSemesterSelect);
+            }
+        }
+    };
+
+    private ValueCallback<String> cart_isLoadedPortal = new ValueCallback<String>() {
+        @Override
+        public void onReceiveValue(String value) {
+            if(value.equals("true")) {
+                JSFunc.modalTopClick(mWebViewAdd, "DERIVED_SSS_SCR_SSS_LINK_ANCHOR3", "click");
+                JSFunc.returnValues(mWebViewAdd, "(function() { return window.frames[\"ModalTop\"].document.getElementById('DERIVED_SSS_SCT_SSR_PB_GO') != null }) ()", cart_isLoadedSemesterSelect);
+            } else {
+                System.out.println("Loading portal");
+                JSFunc.returnValues(mWebViewAdd, "(function() { return window.frames[\"ModalTop\"].document.getElementById('DERIVED_SSS_SCL_SS_WEEKLY_SCHEDULE') != null }) ()", cart_isLoadedPortal);
+            }
+        }
+    };
+
+    private void initWebviewAdd() {
+        mWebViewAdd = (WebView) findViewById(R.id.webviewAdd);
+        mWebViewAdd.setVisibility(View.VISIBLE);
+        mWebViewAdd.getSettings().setJavaScriptEnabled(true);
+        mWebViewAdd.getSettings().setDomStorageEnabled(true);
+        mWebViewAdd.getSettings().setCacheMode(WebSettings.LOAD_DEFAULT);
+
+        WebViewClient webViewClient = new WebViewClient(){
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                super.onPageFinished(view, url);
+                System.out.println("Cart Page finished here");
+            }
+
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+                System.out.println("CART URL PUSHED: " + request.getUrl());
+                return super.shouldOverrideUrlLoading(view, request);
+            }
+        };
+
+        WebChromeClient webChromeClient = new WebChromeClient(){
+            @Override
+            public boolean onJsAlert(WebView view, String url, String message, JsResult result) {
+                System.out.println("Cart MESSAGE GET: " + message);
+                result.confirm();
+                return true;
+            }
+        };
+
+        mWebViewAdd.setWebChromeClient(webChromeClient);
+        mWebViewAdd.setWebViewClient(webViewClient);
+
+        mWebViewAdd.loadUrl("https://my.fullerton.edu/Portal/Dashboard/PSoft/StudentCenter/");
+        JSFunc.returnValues(mWebViewAdd, "(function() { return window.frames[\"ModalTop\"].document.getElementById('DERIVED_SSS_SCL_SS_WEEKLY_SCHEDULE') != null }) ()", cart_isLoadedPortal);
     }
 }
