@@ -100,7 +100,7 @@ public class LoginActivity extends AppCompatActivity {
                 pageLoaded = true;
 
                 if(pendingLogin){
-                    //mWebView.setVisibility(View.VISIBLE);
+                    mWebView.setVisibility(View.VISIBLE);
                     JSFunc.alert(mWebView, "document.querySelector('#content > h3:nth-child(1)').textContent", null); //TODO: Value Callback
                 }
 
@@ -143,7 +143,7 @@ public class LoginActivity extends AppCompatActivity {
         mWebView.setWebViewClient(webViewClient);
         mWebView.setWebChromeClient(webChromeClient);
 
-        //mWebView.setVisibility(View.VISIBLE);
+        // mWebView.setVisibility(View.VISIBLE);
         showProgress(false, "");
     }
 
